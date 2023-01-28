@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>World finder</title>
+    <style>
+        body, html {
+            padding: 0;
+            margin: 0;
+            top: 0;
+            height: 100%;
+            width:100%;
+        }
+
+        /* Line styling */
+        .line {
+            width: 100%;
+            height: 70px;
+            background-color: #f2d80d;
+            border: solid;
+            border-color: #f2eba4;
+            position: absolute;
+            display: flex;
+            z-index: 0;
+        }
+
+        /* Pill-shaped bar styling */
+        .pill-bar {
+            width: fit-content;
+            height: 50px;
+            border: solid;
+            background-color: #277d9d;
+            border-color: #a4dffa;
+            border-radius: 5px;
+            top: 10px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Word length selection styling */
+        .length-select {
+            float: right;
+            margin-right: 10px;
+            margin-left: 10px;
+            padding: 5px 10px;
+            background-color: #a4dffa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* Word list selection styling */
+        .list-select {
+            margin: 0 10px;
+            padding: 5px 10px;
+            background-color: #a4dffa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        /* Search button styling */
+        .search-btn {
+            float: left;
+            margin-left: 10px;
+            margin-right: 10px;
+            padding: 5px 10px;
+            background-color: #a4dffa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* Word display styling */
+        #word-display {
+            display: none;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            width: fit-content;
+            font-size: 30px;
+            padding: 5px 10px;
+            margin-top: 35px;
+            background-color: #a4dffa;
+            color: white;
+            border-radius: 5px;
+        }
+        #word-img {
+            margin-left: auto;
+            margin-right: auto;
+            width: 50%;
+            height: auto;
+            border-radius: 5px;
+            border: solid;
+            border-color: #a4dffa;
+            background-color: #277d9d;
+            display: none;
+        }
+
+        /* Next and Save button styling */
+        .next-btn, .save-btn {
+            padding: 5px 10px;
+            background-color: #a4dffa;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .next-save-btns {
+            display: none;
+            justify-content: center;
+            margin-top: 25px;
+            margin-bottom: 25px;
+        }
+
+        #info-display {
+            width: fit-content;
+            height: fit-content;
+            border: solid;
+            padding: 5px 10px;
+            background-color: #277d9d;
+            border-color: #a4dffa;
+            color: white;
+            border-radius: 5px;
+            margin: 0 auto;
+        }
+
+        body {
+            background-color: #277d9d;
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center center;
+        }
+
+        * {
+            font-size: 100%;
+            font-family: "Century Gothic";
+            font-weight: bold;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="line"></div>
+    <div class="pill-bar">
+        <select class="length-select">
+            <option value="4">4 letters</option>
+            <option value="5">5 letters</option>
+            <option value="6">6 letters</option>
+        </select>
+        <select class="list-select">
+            <option value="estonia">Estonian words</option>
+            <option value="english">English words</option>
+            <option value="letterCombinations">Letter combinations</option>
+            <option value="numberCombinations">Number and letter combinations</option>
+        </select>
+        <button class="search-btn">Search</button>
+    </div>
+    <div id="info-display">
+        <p>GROWTOPIA maailmaleidja kasutamine:</p>
+        <p>-Vali soovitud sõna pikkus</p>
+        <p>-Vali soovitud sõnaloend (4 valikut)</p>
+        <p>-Vajuta OTSI</p>
+        <p>Programm kuvab ühe sõna korraga ekraanil ja ei näita sõnu mida kasutaja on varem näinud.</p>
+    </div>
+    <div id="word-display"></div>
+    <div class="next-save-btns">
+        <button class="save-btn">Save</button>
+        <button class="next-btn">Next</button>
+    </div>
+    <img id="word-img" src="" alt="Word Image">
+<script>
+        // Initialize local storage
+        if (localStorage.getItem("seenWords") === null) {
+            localStorage.setItem("seenWords", JSON.stringify([]));
+        }
+        if (localStorage.getItem("savedWords") === null) {
+            localStorage.setItem("savedWords", JSON.stringify([]));
+        }
+    
+        // Assign JSON lists to variables
+        var estonianWords = [
+            "loom",
+            "puu",
+            "kool",
+            "põll",
+            "maa",
+            "koda",
+            "kool"
+        ];
+
+        var englishWords = [
+            "four",
+            "five",
+            "six",
+            "lunch",
+            "apple",
+            "water",
+            "table"
+        ];
+
+        var letterCombinations = [
+            "abcd",
+            "efgh",
+            "ijkl",
+            "mnop",
+            "qrst",
+            "uvwxy",
+            "zabc"
+        ];
+
+        var numberCombinations = [
+            "1abc",
+            "2def",
+            "3ghi",
+            "4jkl",
+            "5mno",
+            "6pqrs",
+            "7tuv"
+        ];
+    
+        // Get search button
+        var searchBtn = document.querySelector('.search-btn');
+        var nextBtn = document.querySelector('.next-btn');
+        var saveBtn = document.querySelector('.save-btn');
+        var wordDisplay = document.querySelector('#word-display');
+        var wordImg = document.querySelector('#word-img');
+        var nextSaveBtns = document.querySelector('.next-save-btns');
+        var infoDisplay = document.querySelector('#info-display')
+    
+        // On search button click
+        searchBtn.addEventListener('click', function() {
+            // Get selected length and list
+            var length = document.querySelector('.length-select').value;
+            var list = document.querySelector('.list-select').value;
+    
+            // Assign selected list to variable
+            var selectedList;
+            switch (list) {
+                case "estonia":
+                    selectedList = estonianWords;
+                    break;
+                case "english":
+                    selectedList = englishWords;
+                    break;
+                case "letterCombinations":
+                    selectedList = letterCombinations;
+                    break;
+                case "numberCombinations":
+                    selectedList = numberCombinations;
+                    break;
+            }
+    
+            // Filter list by selected length
+            var filteredList = selectedList.filter(word => word.length === parseInt(length));
+    
+            // Clear previous word list
+            wordDisplay.innerHTML = '';
+    
+            // Show first word that has not been seen before
+            var seenWords = JSON.parse(localStorage.getItem("seenWords"));
+            for (var i = 0; i < filteredList.length; i++) {
+                if (!seenWords.includes(filteredList[i])) {
+                    infoDisplay.style.display = "none";
+                    wordDisplay.style.display = "flex";
+                    wordDisplay.innerHTML = filteredList[i].toUpperCase();;
+                    nextSaveBtns.style.display = "flex";
+                    const img = new Image();
+                    img.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
+                    
+                    if (img.complete) {
+                        callback(true);
+                    } else {
+                        img.onload = () => {
+                            wordImg.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
+                            wordImg.style.display = "flex";
+                        };
+                        
+                        img.onerror = () => {
+                            wordImg.style.display = "none";
+                        };
+                }
+                    seenWords.push(filteredList[i]);
+                    localStorage.setItem("seenWords", JSON.stringify(seenWords));
+                    break;
+                }
+            }
+        });
+    
+        // On next button click
+        nextBtn.addEventListener('click', function() {
+            // Get selected length and list
+            var length = document.querySelector('.length-select').value;
+            var list = document.querySelector('.list-select').value;
+    
+            // Assign selected list to variable
+            var selectedList;
+            switch (list) {
+                case "estonia":
+                    selectedList = estonianWords;
+                    break;
+                case "english":
+                    selectedList = englishWords;
+                    break;
+                case "letterCombinations":
+                    selectedList = letterCombinations;
+                    break;
+                case "numberCombinations":
+                    selectedList = numberCombinations;
+                    break;
+            }
+        // Filter list by selected length
+        var filteredList = selectedList.filter(word => word.length === parseInt(length));
+
+        // Get seen words
+        var seenWords = JSON.parse(localStorage.getItem("seenWords"));
+
+        // Show next word that has not been seen before
+        for (var i = 0; i < filteredList.length; i++) {
+            if (!seenWords.includes(filteredList[i])) {
+                wordDisplay.innerHTML = filteredList[i].toUpperCase();;
+                const img = new Image();
+                img.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
+                
+                if (img.complete) {
+                    callback(true);
+                } else {
+                    img.onload = () => {
+                        wordImg.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
+                        wordImg.style.display = "flex";
+                    };
+                    
+                    img.onerror = () => {
+                        wordImg.style.display = "none";
+                    };
+                }
+                seenWords.push(filteredList[i]);
+                localStorage.setItem("seenWords", JSON.stringify(seenWords));
+                break;
+            }
+        }
+    });
+
+    // On save button click
+    saveBtn.addEventListener('click', function() {
+        // Get word to save
+        var wordToSave = wordDisplay.innerHTML;
+
+        // Ask user for number of days
+        var days = prompt("Enter number of days to save word:");
+
+        // Get current date and time
+        var date = new Date();
+
+        // Add word to saved words list in local storage
+        var savedWords = JSON.parse(localStorage.getItem("savedWords"));
+        savedWords.push({word: wordToSave, days: days, date: date});
+        localStorage.setItem("savedWords", JSON.stringify(savedWords));
+    });
+</script>
+</body>
+</html>
