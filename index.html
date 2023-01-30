@@ -2,7 +2,8 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GROWTOPIA Maailma leidja</title>
+    <title>GROW Maailmaleidja</title>
+    <link rel="icon" type="image/x-icon" href="wl.gif">
     <style>
         /* Body and HTML styling */
         body, html {
@@ -57,20 +58,23 @@
         }
 
         /* Form field styling */
-        .length-select, .list-select, .search-btn {
+        .length-select, .list-select, .search-btn, #display-words-button {
             padding: 5px 10px;
             background-color: #a4dffa;
             color: white;
             border: none;
             border-radius: 5px;
         }
-        .length-select {
-            float: right;
-            margin-right: 10px;
+        #info {
             margin-left: 10px;
         }
+        #display-words-button {
+            margin-left: 10px;
+        }
+        .length-select {
+            margin-right: 10px;
+        }
         .search-btn {
-            float: left;
             margin-left: 10px;
             margin-right: 10px;
         }
@@ -92,7 +96,7 @@
         #word-img {
             margin-left: auto;
             margin-right: auto;
-            width: 50%;
+            width: 60%;
             height: auto;
             border-radius: 5px;
             border: solid;
@@ -117,12 +121,17 @@
             margin-top: 25px;
             margin-bottom: 25px;
         }
+        .ex-in {
+            display: none;
+            justify-content: center;
+            margin-top: 25px; 
+        }
 
         #info-display {
             width: fit-content;
             height: fit-content;
             border: solid;
-            padding: 5px 10px;
+            padding: 5px 15px;
             background-color: #277d9d;
             border-color: #a4dffa;
             color: white;
@@ -168,12 +177,10 @@
             font-weight: bold;
         }
         #delete-words-button {
-            display: none;
             background-color: red;
         }
         
         #lisa-words-button {
-            display: none;
             background-color: rgb(67, 222, 67);
         }
 
@@ -185,22 +192,19 @@
             width: 30px;
             height: 30px;
         }
-
-        footer {
-            float: bottom;
+        #title {
+            display: flex;
+            align-items: center;
+            height: fit-content;
+            width: fit-content;
         }
-
     </style>
 </head>
 <body>
     <div class="line">
-        <div id="left" class="in">
-            <button id="display-words-button">ARHIIV</button>
-            <button id="lisa-words-button" class="lisa">+</button>
-            <button id="info" class="lisa">i</button>
-            <button id="delete-words-button" class="lisa">-</button>
-        </div>
         <div class="pill-bar">
+            <button id="info">INFO</button>
+            <button id="display-words-button">ARHIIV</button>
             <select class="length-select">
                 <option value="4">4 tähte</option>
                 <option value="5">5 tähte</option>
@@ -214,13 +218,11 @@
             </select>
             <button class="search-btn">OTSI</button>
         </div>
-        <div id="right">
-            <button id="import-words-button">IMPORT</button>
-            <button id="export-words-button">EKSPORT</button>
-        </div>
     </div>
     <div id="info-display">
-        <p>GROWTOPIA maailmaleidja kasutamine:</p>
+        <div id="title">
+            <img style="position: relative; right: 5px;" src="https://static.wikia.nocookie.net/growtopia/images/8/8f/ItemSprites.png/revision/latest/window-crop/width/32/x-offset/1152/y-offset/192/window-width/32/window-height/32?format=png&fill=cb-20230126144854"><p style="display: inline;">GROW Maailmaleidja kasutamine:</p>
+        </div>
         <br><p>-Vali soovitud sõna pikkus (4 - 6)</p>
         <p>-Vali soovitud sõnaloend</p>
         <p>-Vajuta "OTSI"</p>
@@ -230,7 +232,12 @@
         <p>Et salvestada maailma, mida hetkel näete vajuta "SALVESTA".</p>
         <p>Et näha salvestatud maailmaid vajuta "ARHIIV".</p>
         <br><p>NB! Programm salvestab sõnu ainult teie brauserisse ja need kaovad, kui brauseri ajalugu kustutatakse.</p>
-        <button>IGN: MONSIKE</button> <button>WORLD: MONSIKE</button>
+    </div>
+    <div class="ex-in">
+        <button id="lisa-words-button" class="lisa">+</button>
+        <button id="import-words-button">IMPORT</button>
+        <button id="export-words-button">EKSPORT</button>
+        <button id="delete-words-button" class="lisa">-</button>
     </div>
     <div id="word-display"></div>
     <div class="next-save-btns">
@@ -282,10 +289,10 @@
         var wordImg = document.querySelector('#word-img');
         var nextSaveBtns = document.querySelector('.next-save-btns');
         var infoDisplay = document.querySelector('#info-display')
-        var listDelete = document.querySelector('#delete-words-button')
         var listDisplay = document.querySelector('#display-words-button')
-        var lisaBtn = document.querySelector('#lisa-words-button')
         var infoBtn = document.querySelector('#info')
+        var exIn = document.querySelector('.ex-in')
+        var lisaBtn = document.querySelector('#lisa-words-button')
     
         // On search button click
         searchBtn.addEventListener('click', function() {
@@ -294,9 +301,8 @@
                 element.remove();
             }
             listDisplay.style.display = "inline";
-            listDelete.style.display = "none";
             infoBtn.style.display = "none";
-            lisaBtn.style.display = "none";
+            exIn.style.display = "none";
             // Get selected length and list
             var length = document.querySelector('.length-select').value;
             var list = document.querySelector('.list-select').value;
@@ -330,8 +336,8 @@
                 if (!seenWords.includes(filteredList[i])) {
                     infoDisplay.style.display = "none";
                     wordDisplay.style.display = "flex";
-                    wordDisplay.innerHTML = filteredList[i].toUpperCase();;
                     nextSaveBtns.style.display = "flex";
+                    wordDisplay.innerHTML = filteredList[i].toUpperCase();;
                     const img = new Image();
                     img.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
                     
@@ -441,8 +447,7 @@
         nextSaveBtns.style.display = "none";
         wordImg.style.display = "none";
         listDisplay.style.display = "none";
-        listDelete.style.display = "inline";
-        lisaBtn.style.display = "inline";
+        exIn.style.display = "flex";
         infoBtn.style.display = "inline";
 
         // retrieve saved words from local storage
@@ -591,10 +596,9 @@
     });
     infoBtn.addEventListener('click', function() {
         listDisplay.style.display = "inline";
-        listDelete.style.display = "none";
         infoBtn.style.display = "none";
-        lisaBtn.style.display = "none";
         infoDisplay.style.display = "block";
+        exIn.style.display = "none";
         var element = document.getElementById("table");
         if (element) {
             element.remove();
