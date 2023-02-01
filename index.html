@@ -1,10 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.85">
     <title>GROW Maailmaleidja</title>
     <link rel="icon" type="image/x-icon" href="wl.gif">
     <style>
+
+        @media only screen and (max-width: 768px) {
+        b {
+            font-size: 20px;
+        }
+        }
+
+        @media only screen and (max-width: 320px) {
+        b {
+            font-size: 10px;
+        }
+        }
+
         /* Body and HTML styling */
         body, html {
             padding: 0;
@@ -12,6 +25,15 @@
             top: 0;
             height: 100%;
             width: 100%;
+        }
+
+        body {
+            -webkit-touch-callout: none; /* iOS Safari */
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+                -ms-user-select: none; /* Internet Explorer/Edge */
+                    user-select: none;
         }
 
         /* Global font styling */
@@ -96,7 +118,7 @@
         #word-img {
             margin-left: auto;
             margin-right: auto;
-            width: 60%;
+            width: 70%;
             height: auto;
             border-radius: 5px;
             border: solid;
