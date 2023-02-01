@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JKW2DQXVN1"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-JKW2DQXVN1');
+    </script>
     <meta name="viewport" content="width=device-width, initial-scale=0.85">
     <title>GROW Maailmaleidja</title>
     <link rel="icon" type="image/x-icon" href="wl.gif">
@@ -316,124 +325,142 @@
         var exIn = document.querySelector('.ex-in')
         var lisaBtn = document.querySelector('#lisa-words-button')
     
-        // On search button click
         searchBtn.addEventListener('click', function() {
-            var element = document.getElementById("table");
-            if (element) {
-                element.remove();
-            }
-            listDisplay.style.display = "inline";
-            infoBtn.style.display = "none";
-            exIn.style.display = "none";
-            // Get selected length and list
-            var length = document.querySelector('.length-select').value;
-            var list = document.querySelector('.list-select').value;
-    
-            // Assign selected list to variable
-            var selectedList;
-            switch (list) {
-                case "estonia":
-                    selectedList = estonianWords;
-                    break;
-                case "english":
-                    selectedList = englishWords;
-                    break;
-                case "letterCombinations":
-                    selectedList = letterCombinations;
-                    break;
-                case "numberCombinations":
-                    selectedList = numberCombinations;
-                    break;
-            }
-    
-            // Filter list by selected length
-            var filteredList = selectedList.filter(word => word.length === parseInt(length));
-    
-            // Clear previous word list
-            wordDisplay.innerHTML = '';
-    
-            // Show first word that has not been seen before
-            var seenWords = JSON.parse(localStorage.getItem("seenWords"));
-            for (var i = 0; i < filteredList.length; i++) {
-                if (!seenWords.includes(filteredList[i])) {
-                    infoDisplay.style.display = "none";
-                    wordDisplay.style.display = "flex";
-                    nextSaveBtns.style.display = "flex";
-                    wordDisplay.innerHTML = filteredList[i].toUpperCase();;
-                    const img = new Image();
-                    img.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
-                    
-                    if (img.complete) {
-                        callback(true);
-                    } else {
-                        img.onload = () => {
-                            wordImg.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
-                            wordImg.style.display = "flex";
-                        };
-                        
-                        img.onerror = () => {
-                            wordImg.style.display = "none";
-                        };
-                }
-                    seenWords.push(filteredList[i]);
-                    localStorage.setItem("seenWords", JSON.stringify(seenWords));
-                    break;
-                }
-            }
+        var element = document.getElementById("table");
+        if (element) {
+            element.remove();
+        }
+        listDisplay.style.display = "inline";
+        infoBtn.style.display = "none";
+        exIn.style.display = "none";
+
+        // Get selected length and list
+        var length = document.querySelector('.length-select').value;
+        var list = document.querySelector('.list-select').value;
+
+        // Assign selected list to variable
+        var selectedList;
+        switch (list) {
+            case "estonia":
+            selectedList = estonianWords;
+            break;
+            case "english":
+            selectedList = englishWords;
+            break;
+            case "letterCombinations":
+            selectedList = letterCombinations;
+            break;
+            case "numberCombinations":
+            selectedList = numberCombinations;
+            break;
+        }
+
+        // Filter list by selected length
+        var filteredList = selectedList.filter(word => word.length === parseInt(length));
+
+        // Clear previous word list
+        wordDisplay.innerHTML = '';
+
+        // Get list of seen words
+        var seenWords = JSON.parse(localStorage.getItem("seenWords"));
+        if (!seenWords) {
+            seenWords = [];
+        }
+
+        // Find a random word that has not been seen before
+        var randomWord;
+        do {
+            var randomIndex = Math.floor(Math.random() * filteredList.length);
+            randomWord = filteredList[randomIndex];
+        } while (seenWords.includes(randomWord));
+
+        // Show the random word and image
+        infoDisplay.style.display = "none";
+        wordDisplay.style.display = "flex";
+        nextSaveBtns.style.display = "flex";
+        wordDisplay.innerHTML = randomWord.toUpperCase();
+
+        const img = new Image();
+        img.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + randomWord + ".png";
+        if (img.complete) {
+            callback(true);
+        } else {
+            img.onload = () => {
+            wordImg.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + randomWord + ".png";
+            wordImg.style.display = "flex";
+            };
+            img.onerror = () => {
+            wordImg.style.display = "none";
+            };
+        }
+
+        // Add the displayed word to the list of seen words
+        seenWords.push(randomWord);
+        localStorage.setItem("seenWords", JSON.stringify(seenWords));
         });
     
         // On next button click
         nextBtn.addEventListener('click', function() {
-            // Get selected length and list
-            var length = document.querySelector('.length-select').value;
-            var list = document.querySelector('.list-select').value;
-    
-            // Assign selected list to variable
-            var selectedList;
-            switch (list) {
-                case "estonia":
-                    selectedList = estonianWords;
-                    break;
-                case "english":
-                    selectedList = englishWords;
-                    break;
-                case "letterCombinations":
-                    selectedList = letterCombinations;
-                    break;
-                case "numberCombinations":
-                    selectedList = numberCombinations;
-                    break;
-            }
+        // Get selected length and list
+        var length = document.querySelector('.length-select').value;
+        var list = document.querySelector('.list-select').value;
+
+        // Assign selected list to variable
+        var selectedList;
+        switch (list) {
+            case "estonia":
+            selectedList = estonianWords;
+            break;
+            case "english":
+            selectedList = englishWords;
+            break;
+            case "letterCombinations":
+            selectedList = letterCombinations;
+            break;
+            case "numberCombinations":
+            selectedList = numberCombinations;
+            break;
+        }
+
         // Filter list by selected length
         var filteredList = selectedList.filter(word => word.length === parseInt(length));
 
-        // Get seen words
-        var seenWords = JSON.parse(localStorage.getItem("seenWords"));
+        // Clear previous word list
+        wordDisplay.innerHTML = '';
 
-        // Show next word that has not been seen before
-        for (var i = 0; i < filteredList.length; i++) {
-            if (!seenWords.includes(filteredList[i])) {
-                wordDisplay.innerHTML = filteredList[i].toUpperCase();;
-                const img = new Image();
-                img.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
-                
-                if (img.complete) {
-                    callback(true);
-                } else {
-                    img.onload = () => {
-                        wordImg.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + filteredList[i] + ".png";
-                        wordImg.style.display = "flex";
-                    };
-                    
-                    img.onerror = () => {
-                        wordImg.style.display = "none";
-                    };
-                }
-                seenWords.push(filteredList[i]);
-                localStorage.setItem("seenWords", JSON.stringify(seenWords));
-                break;
-            }
+        // Get list of seen words
+        var seenWords = JSON.parse(localStorage.getItem("seenWords"));
+        if (!seenWords) {
+            seenWords = [];
         }
+
+        // Find a random word that has not been seen before
+        var randomWord;
+        do {
+            var randomIndex = Math.floor(Math.random() * filteredList.length);
+            randomWord = filteredList[randomIndex];
+        } while (seenWords.includes(randomWord));
+
+        // Show the random word and image
+        wordDisplay.innerHTML = randomWord.toUpperCase();
+
+        const img = new Image();
+        img.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + randomWord + ".png";
+        if (img.complete) {
+            callback(true);
+        } else {
+            img.onload = () => {
+            wordImg.src = "https://s3.amazonaws.com/world.growtopiagame.com/" + randomWord + ".png";
+            wordImg.style.display = "flex";
+            };
+            img.onerror = () => {
+            wordImg.style.display = "none";
+            };
+        }
+
+        // Add the displayed word to the list of seen words
+        seenWords.push(randomWord);
+        localStorage.setItem("seenWords", JSON.stringify(seenWords));
     });
 
     // On save button click
